@@ -47,6 +47,14 @@
       width: 122px;
     }
   </style>
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "f8731f636b9f4cbaaa90734246f5c7ce"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
+                          
 </head>
 
 <body>
@@ -69,25 +77,47 @@
     </form>
 
     <section id="error-btns">
+      <!-- 0 -->
       <button>Console Log</button>
+      <!-- 1 -->
       <button>Console Error</button>
+      <!-- 2 -->
       <button>Console Count</button>
+      <!-- 3 -->
       <button>Console Warn</button>
+      <!-- 4 -->
       <button>Console Assert</button>
+      <!-- 5 -->
       <button>Console Clear</button>
+      <!-- 6 -->
       <button>Console Dir</button>
+      <!-- 7 -->
       <button>Console dirxml</button>
+      <!-- 8 -->
       <button>Console Group Start</button>
+      <!-- 9 -->
       <button>Console Group End</button>
+      <!-- 10 -->
       <button>Console Table</button>
+      <!-- 11 -->
       <button>Start Timer</button>
+      <!-- 12 -->
       <button>End Timer</button>
+      <!-- 13 -->
       <button>Console Trace</button>
+      <!-- 14 -->
       <button>Trigger a Global Error</button>
     </section>
   </main>
 
   <script>
+    class SyntaxError extends Error {
+      constructor(message) {
+        super(message); // (1)
+        this.name = "SyntaxError"; // (2)
+      }
+    }
+
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -95,14 +125,93 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      // output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      if (isNaN(firstNum) || isNaN(secondNum)) {
+          throw new SyntaxError('Invalid or unexpected token');
+      }
+      try {
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      } catch (error) {
+        console.error(error);
+      } finally{
+        console.log("finshed");
+      }
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
     // You may move this JS to another file if you wish
+    let logBtn = errorBtns[0];
+    logBtn.addEventListener('click', () => console.log('Console Log Demo'));
+
+    let errorBtn = errorBtns[1];
+    errorBtn.addEventListener('click', () => console.error('Console Error Demo'));
+
+    let countBtn = errorBtns[2];
+    countBtn.addEventListener('click', () => console.count('Count Button'));
+
+    let warnBtn = errorBtns[3];
+    warnBtn.addEventListener('click', () => console.warn('Console Warn Button'));
+
+    const number = 2;
+    const errorMsg = 'The number does not equal 3';
+    let assertBtn = errorBtns[4];
+    assertBtn.addEventListener('click', () => console.assert(number == 3, {number, errorMsg}));
+
+    let clearBtn = errorBtns[5];
+    clearBtn.addEventListener('click', () => console.clear());
+
+    let dirBtn = errorBtns[6];
+    dirBtn.addEventListener('click', () => console.dir(dirBtn));
+
+    let dirxmlBtn = errorBtns[7];
+    dirxmlBtn.addEventListener('click', () => console.dirxml(dirxmlBtn));
+
+    let groupStartBtn = errorBtns[8];
+    groupStartBtn.addEventListener('click', () => {
+      console.group('console.group');
+    });
+
+    let groupEndBtn = errorBtns[9];
+    groupEndBtn.addEventListener('click', () => console.groupEnd());
+
+    let tableBtn = errorBtns[10];
+    tableBtn.addEventListener('click', () => console.table([{ name: 'math', num: 150 }, { name: 'cse110', num: 110 }]));
+
+    let startTimerBtn = errorBtns[11];
+    startTimerBtn.addEventListener('click', () => console.time('Timer Button'));
+
+    let endTimerBtn = errorBtns[12];
+    endTimerBtn.addEventListener('click', () => console.timeEnd('Timer Button'));
+
+    
+    let traceBtn = errorBtns[13];
+    traceBtn.addEventListener('click', function handleBtnClick(){deep();});
+    
+    function deep() {
+      function deeper() {
+        function deepest() {
+          console.trace('console.trace');
+        }
+        deepest();
+      }
+      deeper();
+    }
+    
+    let globalErrorBtn = errorBtns[14];
+    globalErrorBtn.addEventListener('click', () => {
+      throw new ReferenceError('Trigger a Global Error');
+    });
+
+    window.onerror = function() {
+      console.log("It causes Error!!!!!!!");
+      TrackJS.track('Testing TrackJS!');
+    };
+
   </script>
 </body>
 
 </html>
+
+
